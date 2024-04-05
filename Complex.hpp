@@ -42,7 +42,7 @@ namespace atMath
         template <class U>
         auto operator/(const U &value) const -> Complex<decltype(real / value)>;
 
-
+        Complex<T> &operator=(const Complex<T> &c);
         template <class U>
         Complex<T> &operator=(const Complex<U> &c);
         template <class U>

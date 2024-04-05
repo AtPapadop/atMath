@@ -250,6 +250,21 @@ namespace atMath
     }
 
     template <class T>
+    Vector<T> &Vector<T>::operator=(const Vector<T> &v)
+    {   
+        if(this != &v){
+            v_data.reset();
+            v_size = v.size();
+            v_data = std::make_unique<T[]>(v_size);
+            for (size_t i = 0; i < v_size; i++)
+            {
+                v_data[i] = v[i];
+            }
+        }
+        return *this;
+    }
+
+    template <class T>
     template <class U>
     Vector<T> &Vector<T>::operator=(const Vector<U> &v)
     {
@@ -257,16 +272,12 @@ namespace atMath
         {
             std::cout << "Warning: Type mismatch. Converting " << (type_map.find(typeid(U).name()) != type_map.end() ? type_map[typeid(U).name()] : typeid(U).name()) << " to " << (type_map.find(typeid(T).name()) != type_map.end() ? type_map[typeid(T).name()] : typeid(T).name()) << std::endl;
         }
-        if (*this != v)
+        v_data.reset();
+        v_size = v.size();
+        v_data = std::make_unique<T[]>(v_size);
+        for (size_t i = 0; i < v_size; i++)
         {
-
-            v_data.reset();
-            v_size = v.size();
-            v_data = std::make_unique<T[]>(v_size);
-            for (size_t i = 0; i < v_size; i++)
-            {
-                v_data[i] = static_cast<T>(v[i]);
-            }
+            v_data[i] = static_cast<T>(v[i]);
         }
         return *this;
     }

@@ -77,7 +77,7 @@ namespace atMath
         template <class U>
         auto operator/(const U &value) const -> Vector<decltype(v_data[0] / value)>;
 
-
+        Vector<T> &operator=(const Vector<T> &v);
         template <class U>
         Vector<T> &operator=(const Vector<U> &v);
 
@@ -225,6 +225,19 @@ namespace atMath
 
         void setX(T x) { Vector<T>::operator[](0) = x; }
         void setY(T y) { Vector<T>::operator[](1) = y; }
+
+        Vec2<T> &operator=(const Vec2<T> &v)
+        {
+            Vector<T>::operator=(v);
+            return *this;
+        }
+
+        template <class U>
+        Vec2<T> &operator=(const Vec2<U> &v)
+        {
+            Vector<T>::operator=(v);
+            return *this;
+        }
     };
     template <class T>
     class Vec3 : public Vector<T>
@@ -254,6 +267,18 @@ namespace atMath
         void setX(T x) { Vector<T>::operator[](0) = x; }
         void setY(T y) { Vector<T>::operator[](1) = y; }
         void setZ(T z) { Vector<T>::operator[](2) = z; }
+
+        Vec3<T> &operator=(const Vec3<T> &v)
+        {
+            Vector<T>::operator=(v);
+            return *this;
+        }
+        template <class U>
+        Vec3<T> &operator=(const Vec3<U> &v)
+        {
+            Vector<T>::operator=(v);
+            return *this;
+        }
 
     };
 
@@ -288,6 +313,17 @@ namespace atMath
         void setZ(T z) { Vector<T>::operator[](2) = z; }
         void setW(T w) { Vector<T>::operator[](3) = w; }
 
+        Vec4<T> &operator=(const Vec4<T> &v)
+        {
+            Vector<T>::operator=(v);
+            return *this;
+        }
+        template <class U>
+        Vec4<T> &operator=(const Vec4<U> &v)
+        {
+            Vector<T>::operator=(v);
+            return *this;
+        }
 
     };
 

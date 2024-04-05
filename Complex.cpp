@@ -80,6 +80,15 @@ namespace atMath{
         return Complex<decltype(real / value)>(real / value, imag / value);
     }
 
+    
+    template <class T>
+    Complex<T> &Complex<T>::operator=(const Complex<T> &c){
+        if (this != &c){
+            real = c.real;
+            imag = c.imag;
+        }
+        return *this;
+    }
 
     template <class T>
     template <class U>
