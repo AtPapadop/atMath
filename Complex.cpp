@@ -200,15 +200,16 @@ namespace atMath{
         return Complex<T>(real, -imag);
     }
 
-    template <class T, class U>
-    auto operator+(U value, const Complex<T> &c) -> Complex<decltype(value + c.real)>{
-        return c + value;
-    }
+    // template <class T, class U>
+    // auto operator+(U value, const Complex<T> &c) -> Complex<decltype(value + c.real)>{
 
-    template <class T, class U>
-    auto operator-(U value, const Complex<T> &c) -> Complex<decltype(value - c.real)>{
-        return c - value;
-    }
+    //     return c + value;
+    // }
+
+    // template <class T, class U>
+    // auto operator-(U value, const Complex<T> &c) -> Complex<decltype(value - c.real)>{
+    //     return c - value;
+    // }
 
     template <class T, class U>
     auto operator/(U value, const Complex<T> &c) -> Complex<decltype(value * c.real / c.squared_modulus())>{
