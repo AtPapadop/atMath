@@ -33,6 +33,7 @@ namespace atMath
         template <class U>
         auto operator/(const Complex<U> &c) const -> Complex<decltype(real / c.real)>;
 
+
         template <class U>
         auto operator+(const U &value) const -> Complex<decltype(real + value)>;
         template <class U>
@@ -65,6 +66,10 @@ namespace atMath
         template <class U>
         Complex<T> &operator/=(const U &value);
 
+        Complex<T> operator-() const{
+            return Complex<T>(-real, -imag);
+        }
+
 
         template <class U>
         operator U() const{
@@ -88,7 +93,13 @@ namespace atMath
             if (!c.real && !c.imag){
                 os << 0;
             } else if (!c.real){
-                os << c.imag << "i";
+                if (c.imag == 1){
+                    os << "i";
+                } else if (c.imag == -1){
+                    os << "-i";
+                } else {
+                    os << c.imag << "i";
+                }
             } else if (!c.imag){
                 os << c.real;
             } else {
@@ -104,11 +115,21 @@ namespace atMath
     };
 
     template <class T>
-    auto operator/(int value, const Complex<T> &c) -> Complex<decltype(c.real / c.squared_modulus())>;
-
-
-    template <class T>
     bool is_complex(const T &value);
+
+    typedef Complex<int> int_c;
+    typedef Complex<float> float_c;
+    typedef Complex<double> double_c;
+    typedef Complex<uint32_t> uint32_c;
+    typedef Complex<uint64_t> uint64_c;
+    typedef Complex<int32_t> int32_c;
+    typedef Complex<int64_t> int64_c;
+    typedef Complex<uint8_t> uint8_c;
+    typedef Complex<int8_t> int8_c;
+    typedef Complex<uint16_t> uint16_c;
+    typedef Complex<int16_t> int16_c;
+
+
 }
 
 

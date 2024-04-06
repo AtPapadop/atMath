@@ -230,6 +230,14 @@ namespace atMath
     }
 
     template <class T>
+    template <class U>
+    Vector<U> Vector<T>::repeat(size_t size, U value)
+    {
+        Vector<U> result(size, value);
+        return result;
+    }
+
+    template <class T>
     T &Vector<T>::operator[](size_t index)
     {
         if (index >= v_size)
@@ -410,6 +418,21 @@ namespace atMath
         for (size_t i = 0; i < v_size; i++)
         {
             v_data[i] *= value;
+        }
+        return *this;
+    }
+
+    template <class T>
+    template <class U>
+    Vector<T> &Vector<T>::operator/=(const U &value)
+    {
+        if (typeid(T) != typeid(decltype(v_data[0] / value)))
+        {
+            std::cout << "Warning: Type mismatch. Converting " << (type_map.find(typeid(decltype(v_data[0] / value)).name()) != type_map.end() ? type_map[typeid(decltype(v_data[0] / value)).name()] : typeid(decltype(v_data[0] / value)).name()) << " to " << (type_map.find(typeid(T).name()) != type_map.end() ? type_map[typeid(T).name()] : typeid(T).name()) << std::endl;
+        }
+        for (size_t i = 0; i < v_size; i++)
+        {
+            v_data[i] /= value;
         }
         return *this;
     }
@@ -939,5 +962,39 @@ namespace atMath
     {
         return subvector(0, size);
     }
+
+    template <class T, class U>
+    auto operator*(const Complex<T> &c, const Vector<U> &v) -> Vector<decltype(c.real * v[0])>
+    {
+        if (v.size() == 2){
+            Vector<decltype(c.real * v[0])> result(2);
+            result[0] = c.real * v[0] - c.imag * v[1];
+            result[1] = c.real * v[1] + c.imag * v[0];
+            return result;
+        }
+        else throw std::runtime_error("Complex multiplication requires a 2D vector."); 
+    }
+
+    template <class T, class U>
+    auto operator*(const Vector<U> &v, const Complex<T> &c) -> Vector<decltype(v[0] * c.real)>
+    {
+        return c * v;
+    }
+
+    template <class T, class U> 
+    auto operator*(const Complex<T> &c, const Vec2<U> &v) -> Vec2<decltype(c.real * v[0])>
+    {
+        Vec2<decltype(c.real * v[0])> result;
+        result[0] = c.real * v[0] - c.imag * v[1];
+        result[1] = c.real * v[1] + c.imag * v[0];
+        return result;
+    }
+
+    template <class T, class U>
+    auto operator*(const Vec2<U> &v, const Complex<T> &c) -> Vec2<decltype(v[0] * c.real)>
+    {
+        return c * v;
+    }
+    
 
 }

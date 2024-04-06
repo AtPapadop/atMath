@@ -71,6 +71,7 @@ namespace atMath{
     template <class T>
     template <class U>
     auto Complex<T>::operator*(const U &value) const -> Complex<decltype(real * value)>{
+        static_assert(std::is_arithmetic<U>::value, "Complex type must be arithmetic");
         return Complex<decltype(real * value)>(real * value, imag * value);
     }
 
@@ -199,11 +200,26 @@ namespace atMath{
         return Complex<T>(real, -imag);
     }
 
-    template <class T>
-    auto operator/(int value, const Complex<T> &c) -> Complex<decltype(c.real / c.squared_modulus())>{
+    template <class T, class U>
+    auto operator+(U value, const Complex<T> &c) -> Complex<decltype(value + c.real)>{
+        return c + value;
+    }
+
+    template <class T, class U>
+    auto operator-(U value, const Complex<T> &c) -> Complex<decltype(value - c.real)>{
+        return c - value;
+    }
+
+    template <class T, class U>
+    auto operator/(U value, const Complex<T> &c) -> Complex<decltype(value * c.real / c.squared_modulus())>{
         double mod_rev = 1 / c.squared_modulus();
         Complex result(c.real * mod_rev, -c.imag * mod_rev);
-        return result;
+        return result * value;
+    }
+
+    template <class T, class U>
+    auto operator*(const U &value, const Complex<T> &c) -> Complex<decltype(c.real * value)>{
+        return c * value;
     }
 
     template <class T>
@@ -211,6 +227,8 @@ namespace atMath{
         const std::type_info &type = typeid(value);
         return std::is_base_of<Complex<int>, T>::value || std::is_base_of<Complex<float>, T>::value || std::is_base_of<Complex<double>, T>::value || std::is_base_of<Complex<uint32_t>, T>::value || std::is_base_of<Complex<uint64_t>, T>::value || std::is_base_of<Complex<int32_t>, T>::value || std::is_base_of<Complex<int64_t>, T>::value || std::is_base_of<Complex<uint8_t>, T>::value || std::is_base_of<Complex<int8_t>, T>::value || std::is_base_of<Complex<uint16_t>, T>::value || std::is_base_of<Complex<int16_t>, T>::value;
     }
+
+    const Complex<int> i(0, 1);
 }
 
 template <class T>
@@ -219,6 +237,7 @@ atMath::Complex<double> sqrt(const atMath::Complex<T> &c){
     double theta = atan2(c.imag, c.real);
     return atMath::Complex<double>(r * cos(theta / 2), r * sin(theta / 2));
 }
+
 
 
 

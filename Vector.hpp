@@ -60,6 +60,8 @@ namespace atMath
         size_t size() const;
 
         static Vector<T> repeat(size_t size, T value);
+        template <class U>
+        static Vector<U> repeat(size_t size, U value);
 
         T &operator[](size_t index);
         const T &operator[](size_t index) const;
@@ -95,7 +97,6 @@ namespace atMath
 
         template <class U>
         Vector<T> &operator/=(const U &value);
-
 
         template <class U>
         bool operator==(const Vector<U> &v) const;
@@ -217,12 +218,7 @@ namespace atMath
         }
         Vec2(const Vector<T> &v) : Vector<T>(v) {}
         Vec2(std::initializer_list<T> list) : Vector<T>(list) {}
-        Vec2(const Complex<T> &c) : Vector<T>(2)
-        {
-            Vector<T>::operator[](0) = c.real;
-            Vector<T>::operator[](1) = c.imag;
-        }
-
+        Vec2(const Complex<T> &c) : Vector<T>(c) {}
         void setX(T x) { Vector<T>::operator[](0) = x; }
         void setY(T y) { Vector<T>::operator[](1) = y; }
 
@@ -238,6 +234,18 @@ namespace atMath
             Vector<T>::operator=(v);
             return *this;
         }
+
+        template <class U>
+        Vec2<T> &operator=(const Complex<U> &c)
+        {
+            Vector<T>::operator[](0) = static_cast<T>(c.real);
+            Vector<T>::operator[](1) = static_cast<T>(c.imag);
+            return *this;
+
+            
+        }
+
+    
     };
     template <class T>
     class Vec3 : public Vector<T>
@@ -257,13 +265,6 @@ namespace atMath
         }
         Vec3(const Vector<T> &v) : Vector<T>(v) {}
         Vec3(std::initializer_list<T> list) : Vector<T>(list) {}
-        Vec3(const Complex<T> &c) : Vector<T>(3)
-        {
-            Vector<T>::operator[](0) = c.real;
-            Vector<T>::operator[](1) = c.imag;
-            Vector<T>::operator[](2) = 0;
-        }
-
         void setX(T x) { Vector<T>::operator[](0) = x; }
         void setY(T y) { Vector<T>::operator[](1) = y; }
         void setZ(T z) { Vector<T>::operator[](2) = z; }
@@ -300,14 +301,6 @@ namespace atMath
         }
         Vec4(const Vector<T> &v) : Vector<T>(v) {}
         Vec4(std::initializer_list<T> list) : Vector<T>(list) {}
-        Vec4(const Complex<T> &c) : Vector<T>(4)
-        {
-            Vector<T>::operator[](0) = c.real;
-            Vector<T>::operator[](1) = c.imag;
-            Vector<T>::operator[](2) = 0;
-            Vector<T>::operator[](3) = 0;
-        }
-
         void setX(T x) { Vector<T>::operator[](0) = x; }
         void setY(T y) { Vector<T>::operator[](1) = y; }
         void setZ(T z) { Vector<T>::operator[](2) = z; }
@@ -326,6 +319,19 @@ namespace atMath
         }
 
     };
+
+    template <class T, class U>
+    auto operator*(const U &value, const Vector<T> &v) -> Vector<decltype(v[0] * value)>
+    {
+        return v * value;
+    }
+
+    template <class T, class U>
+    auto operator/(const U &value, const Vector<T> &v) -> Vector<decltype(value / v[0])>
+    {
+        return value * v.inverse();
+    }
+
 
 
     typedef Vec2<float> Vec2f;
