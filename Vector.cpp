@@ -290,65 +290,66 @@ namespace atMath
         return *this;
     }
 
-    template <class T>
-    template <class U>
-    auto Vector<T>::operator+(const Vector<U> &v) const -> Vector<decltype(v_data[0] + v[0])>
-    {
-        if (v_size != v.size())
-        {
-            throw std::runtime_error("Vectors must be the same size to add.");
-        }
+    
+    // template <class T>
+    // template <class U>
+    // auto Vector<T>::operator+(const Vector<U> &v) const -> Vector<decltype(v_data[0] + v[0])>
+    // {
+    //     if (v_size != v.size())
+    //     {
+    //         throw std::runtime_error("Vectors must be the same size to add.");
+    //     }
         
-        // decltype(v_data[0] + v[0]) test = v_data[0] + v[0];
-        // std::cout << "Type: " << typeid(test).name() << std::endl;
-        // std::cout << "value: " << test << std::endl;
-        Vector<decltype(v_data[0] + v[0])> result(v_size);
-        for (size_t i = 0; i < v_size; i++)
-        {
-            result[i] = v_data[i] + v[i];
-        }
-        return result;
-    }
+    //     // decltype(v_data[0] + v[0]) test = v_data[0] + v[0];
+    //     // std::cout << "Type: " << typeid(test).name() << std::endl;
+    //     // std::cout << "value: " << test << std::endl;
+    //     Vector<decltype(v_data[0] + v[0])> result(v_size);
+    //     for (size_t i = 0; i < v_size; i++)
+    //     {
+    //         result[i] = v_data[i] + v[i];
+    //     }
+    //     return result;
+    // }
 
-    template <class T>
-    template <class U>
-    auto Vector<T>::operator-(const Vector<U> &v) const -> Vector<decltype(v_data[0] - v[0])>
-    {
-        if (v_size != v.size())
-        {
-            throw std::runtime_error("Vectors must be the same size to subtract.");
-        }
-        Vector<decltype(v_data[0] - v[0])> result(v_size);
-        for (size_t i = 0; i < v_size; i++)
-        {
-            result[i] = v_data[i] - v[i];
-        }
-        return result;
-    }
+    // template <class T>
+    // template <class U>
+    // auto Vector<T>::operator-(const Vector<U> &v) const -> Vector<decltype(v_data[0] - v[0])>
+    // {
+    //     if (v_size != v.size())
+    //     {
+    //         throw std::runtime_error("Vectors must be the same size to subtract.");
+    //     }
+    //     Vector<decltype(v_data[0] - v[0])> result(v_size);
+    //     for (size_t i = 0; i < v_size; i++)
+    //     {
+    //         result[i] = v_data[i] - v[i];
+    //     }
+    //     return result;
+    // }
 
-    template <class T>
-    template <class U>
-    auto Vector<T>::operator*(const U &value) const -> Vector<decltype(v_data[0] * value)>
-    {
-        Vector<decltype(v_data[0] * value)> result(v_size);
-        for (size_t i = 0; i < v_size; i++)
-        {
-            result[i] = v_data[i] * value;
-        }
-        return result;
-    }
+    // template <class T>
+    // template <class U>
+    // auto Vector<T>::operator*(const U &value) const -> Vector<decltype(v_data[0] * value)>
+    // {
+    //     Vector<decltype(v_data[0] * value)> result(v_size);
+    //     for (size_t i = 0; i < v_size; i++)
+    //     {
+    //         result[i] = v_data[i] * value;
+    //     }
+    //     return result;
+    // }
 
-    template <class T>
-    template <class U>
-    auto Vector<T>::operator/(const U &value) const -> Vector<decltype(v_data[0] / value)>
-    {
-        Vector<decltype(v_data[0] / value)> result(v_size);
-        for (size_t i = 0; i < v_size; i++)
-        {
-            result[i] = v_data[i] / value;
-        }
-        return result;
-    }
+    // template <class T>
+    // template <class U>
+    // auto Vector<T>::operator/(const U &value) const -> Vector<decltype(v_data[0] / value)>
+    // {
+    //     Vector<decltype(v_data[0] / value)> result(v_size);
+    //     for (size_t i = 0; i < v_size; i++)
+    //     {
+    //         result[i] = v_data[i] / value;
+    //     }
+    //     return result;
+    // }
 
     template <class T>
     template <class U>
@@ -484,7 +485,7 @@ namespace atMath
 
     template <class T>
     template <class U>
-    auto Vector<T>::operator*(const Vector<U> &v) -> decltype(v_data[0] * v[0])
+    auto Vector<T>::operator*(const Vector<U> &v) const -> decltype(v_data[0] * v[0])
     {
         return dot(v);
     }
@@ -963,23 +964,6 @@ namespace atMath
         return subvector(0, size);
     }
 
-    template <class T, class U>
-    auto operator*(const Complex<T> &c, const Vector<U> &v) -> Vector<decltype(c.real * v[0])>
-    {
-        if (v.size() == 2){
-            Vector<decltype(c.real * v[0])> result(2);
-            result[0] = c.real * v[0] - c.imag * v[1];
-            result[1] = c.real * v[1] + c.imag * v[0];
-            return result;
-        }
-        else throw std::runtime_error("Complex multiplication requires a 2D vector."); 
-    }
-
-    template <class T, class U>
-    auto operator*(const Vector<U> &v, const Complex<T> &c) -> Vector<decltype(v[0] * c.real)>
-    {
-        return c * v;
-    }
 
     template <class T, class U> 
     auto operator*(const Complex<T> &c, const Vec2<U> &v) -> Vec2<decltype(c.real * v[0])>

@@ -24,24 +24,24 @@ namespace atMath
         ~Complex();
 
 
-        template <class U>
-        auto operator+(const Complex<U> &c) const -> Complex<decltype(real + c.real)>;
-        template <class U>
-        auto operator-(const Complex<U> &c) const -> Complex<decltype(real - c.real)>;
-        template <class U>
-        auto operator*(const Complex<U> &c) const -> Complex<decltype(real * c.real)>;
-        template <class U>
-        auto operator/(const Complex<U> &c) const -> Complex<decltype(real / c.real)>;
+        // template <class U>
+        // auto operator+(const Complex<U> &c) const -> Complex<decltype(real + c.real)>;
+        // template <class U>
+        // auto operator-(const Complex<U> &c) const -> Complex<decltype(real - c.real)>;
+        // template <class U>
+        // auto operator*(const Complex<U> &c) const -> Complex<decltype(real * c.real)>;
+        // template <class U>
+        // auto operator/(const Complex<U> &c) const -> Complex<decltype(real / c.real)>;
 
 
-        template <class U>
-        auto operator+(const U &value) const -> Complex<decltype(real + value)>;
-        template <class U>
-        auto operator-(const U &value) const -> Complex<decltype(real - value)>;
-        template <class U>
-        auto operator*(const U &value) const -> Complex<decltype(real * value)>;
-        template <class U>
-        auto operator/(const U &value) const -> Complex<decltype(real / value)>;
+        // template <class U>
+        // auto operator+(const U &value) const -> Complex<decltype(real + value)>;
+        // template <class U>
+        // auto operator-(const U &value) const -> Complex<decltype(real - value)>;
+        // template <class U>
+        // auto operator*(const U &value) const -> Complex<decltype(real * value)>;
+        // template <class U>
+        // auto operator/(const U &value) const -> Complex<decltype(real / value)>;
 
         Complex<T> &operator=(const Complex<T> &c);
         template <class U>
@@ -128,6 +128,68 @@ namespace atMath
     typedef Complex<int8_t> int8_c;
     typedef Complex<uint16_t> uint16_c;
     typedef Complex<int16_t> int16_c;
+
+    template <class T, class U>
+    inline auto operator+(const Complex<T> &c1, const Complex<U> &c2) -> Complex<decltype(c1.real + c2.real)>{
+        return Complex<decltype(c1.real + c2.real)>(c1.real + c2.real, c1.imag + c2.imag);
+    }
+
+    template <class T, class U>
+    inline auto operator-(const Complex<T> &c1, const Complex<U> &c2) -> Complex<decltype(c1.real - c2.real)>{
+        return Complex<decltype(c1.real - c2.real)>(c1.real - c2.real, c1.imag - c2.imag);
+    }
+
+    template <class T, class U>
+    inline auto operator*(const Complex<T> &c1, const Complex<U> &c2) -> Complex<decltype(c1.real * c2.real)>{
+        return Complex<decltype(c1.real * c2.real)>(c1.real * c2.real - c1.imag * c2.imag, c1.real * c2.imag + c1.imag * c2.real);
+    }
+
+    template <class T, class U>
+    inline auto operator/(const Complex<T> &c1, const Complex<U> &c2) -> Complex<decltype(c1.real / c2.real)>{
+        return Complex<decltype(c1.real / c2.real)>( (c1.real * c2.real + c1.imag * c2.imag) / (c2.real * c2.real + c2.imag * c2.imag), (c1.imag * c2.real - c1.real * c2.imag) / (c2.real * c2.real + c2.imag * c2.imag));
+    }
+
+    template <class T, class U>
+    inline auto operator+(const Complex<T> &c, const U &value) -> Complex<decltype(c.real + value)>{
+        return Complex<decltype(c.real + value)>(c.real + value, c.imag);
+    }
+
+    template <class T, class U>
+    inline auto operator+(const U &value, const Complex<T> &c) -> Complex<decltype(c.real + value)>{
+        return c + value;
+    }
+
+    template <class T, class U>
+    inline auto operator-(const Complex<T> &c, const U &value) -> Complex<decltype(c.real - value)>{
+        return Complex<decltype(c.real - value)>(c.real - value, c.imag);
+    }
+
+    template <class T, class U>
+    inline auto operator-(const U &value, const Complex<T> &c) -> Complex<decltype(value - c.real)>{
+        return Complex<decltype(value - c.real)>(value - c.real, -c.imag);
+    }
+
+    template <class T, class U>
+    inline auto operator*(const Complex<T> &c, const U &value) -> Complex<decltype(c.real * value)>{
+        return Complex<decltype(c.real * value)>(c.real * value, c.imag * value);
+    }
+
+    template <class T, class U>
+    inline auto operator*(const U &value, const Complex<T> &c) -> Complex<decltype(c.real * value)>{
+        return c * value;
+    }
+
+    template <class T, class U>
+    inline auto operator/(const Complex<T> &c,const  U &value) -> Complex<decltype(c.real / value)>{
+        return Complex<decltype(c.real / value)>(c.real / value, c.imag / value);
+    }
+
+    template <class T, class U>
+    auto operator/(const U &value, const Complex<T> &c) -> Complex<decltype(value * c.real / c.squared_modulus())>{
+        double mod_rev = 1 / c.squared_modulus();
+        Complex result(c.real * mod_rev, -c.imag * mod_rev);
+        return result * value;
+    }
 
 
 }

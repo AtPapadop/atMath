@@ -67,40 +67,35 @@ namespace atMath
         const T &operator[](size_t index) const;
 
 
-        template <class U>
-        auto operator+(const Vector<U> &v) const -> Vector<decltype(v_data[0] + v[0])>;
+        // template <class U>
+        // auto operator+(const Vector<U> &v) const -> Vector<decltype(v_data[0] + v[0])>;
 
-        template <class U>
-        auto operator-(const Vector<U> &v) const -> Vector<decltype(v_data[0] - v[0])>;
+        // template <class U>
+        // auto operator-(const Vector<U> &v) const -> Vector<decltype(v_data[0] - v[0])>;
 
-        template <class U>
-        auto operator*(const U &value) const -> Vector<decltype(v_data[0] * value)>;
+        // template <class U>
+        // auto operator*(const U &value) const -> Vector<decltype(v_data[0] * value)>;
 
-        template <class U>
-        auto operator/(const U &value) const -> Vector<decltype(v_data[0] / value)>;
+        // template <class U>
+        // auto operator/(const U &value) const -> Vector<decltype(v_data[0] / value)>;
 
         Vector<T> &operator=(const Vector<T> &v);
         template <class U>
         Vector<T> &operator=(const Vector<U> &v);
-
         template <class U>
         Vector<T> &operator+=(const Vector<U> &v);
-
         template <class U>
         Vector<T> &operator-=(const Vector<U> &v);
-
         template <class U>
         Vector<T> &operator*=(const Vector<U> &v);
 
         template <class U>
         Vector<T> &operator*=(const U &value);
-
         template <class U>
         Vector<T> &operator/=(const U &value);
 
         template <class U>
         bool operator==(const Vector<U> &v) const;
-
         template <class U>
         bool operator!=(const Vector<U> &v) const;
 
@@ -108,28 +103,22 @@ namespace atMath
 
         template <class U>
         auto dot(const Vector<U> &v) const -> decltype(v_data[0] * v[0]);
-
         template <class U>
-        auto operator*(const Vector<U> &v) -> decltype(v_data[0] * v[0]);
-
+        auto operator*(const Vector<U> &v) const -> decltype(v_data[0] * v[0]);
         template <class U>
         auto cross(const Vector<U> &v) const -> Vector<decltype(v_data[0] * v[0])>;
-
         template <class U>
         auto operator^(const Vector<U> &v) -> Vector<decltype(v_data[0] * v[0])>;
 
 
         template <class U>
         double angle(const Vector<U> &v, bool deg = false) const;
-
         template <class U, class V>
         static double angle(const Vector<U> &v1, const Vector<V> &v2, bool deg = false);
-
         template <class U>
         auto product(const Vector<U> &v) const -> Vector<decltype(v_data[0] * v[0])>;
 
         T sum() const;
-        //double magnitude() const;
         auto magnitude() const -> decltype(sqrt(v_data[0] * v_data[0]));
 
         auto inverse() const -> Vector<decltype(1 / v_data[0])>;
@@ -138,45 +127,32 @@ namespace atMath
 
         template <class U>
         Vector<T> append(const U &value);
-
         template <class U>
         Vector<T> insert(size_t index, const U &value);
-
         template <class U>
         Vector<T> append(const Vector<U> &v);
-
         template <class U>
         Vector<T> insert(size_t index, const Vector<U> &v);
-
         template <class U>
         Vector<T> append(const std::vector<U> &v);
-
         template <class U>
         Vector<T> insert(size_t index, const std::vector<U> &v);
-
         template <class U>
         Vector<T> append(const std::initializer_list<U> &list);
-
         template <class U>
         Vector<T> insert(size_t index, const std::initializer_list<U> &list);
 
         
-
         template <class U>
         Vector<T> append(const Vec2<U> &v);
-
         template <class U>
         Vector<T> insert(size_t index, const Vec2<U> &v);
-
         template <class U>
         Vector<T> append(const Vec3<U> &v);
-
         template <class U>
         Vector<T> insert(size_t index, const Vec3<U> &v);
-
         template <class U>
         Vector<T> append(const Vec4<U> &v);
-
         template <class U>
         Vector<T> insert(size_t index, const Vec4<U> &v);
 
@@ -318,12 +294,83 @@ namespace atMath
             return *this;
         }
 
+        
+
     };
 
     template <class T, class U>
-    auto operator*(const U &value, const Vector<T> &v) -> Vector<decltype(v[0] * value)>
+    auto operator+(const Vector<T> &v1, const Vector<U> &v2) -> Vector<decltype(v1[0] + v2[0])>
+    {
+        if (v1.size() != v2.size())
+        {
+            throw std::runtime_error("Vectors must be the same size to add.");
+        }
+        Vector<decltype(v1[0] + v2[0])> result(v1.size());
+        for (size_t i = 0; i < v1.size(); i++)
+        {
+            result[i] = v1[i] + v2[i];
+        }
+        return result;
+    }
+
+    template <class T, class U>
+    auto operator-(const Vector<T> &v1, const Vector<U> &v2) -> Vector<decltype(v1[0] - v2[0])>
+    {
+        if (v1.size() != v2.size())
+        {
+            throw std::runtime_error("Vectors must be the same size to subtract.");
+        }
+        Vector<decltype(v1[0] - v2[0])> result(v1.size());
+        for (size_t i = 0; i < v1.size(); i++)
+        {
+            result[i] = v1[i] - v2[i];
+        }
+        return result;
+    }
+
+    template <class T, class U>
+    auto operator*(const Vector<T> &v, const U &value) -> Vector<decltype(v[0] * value)>
+    {
+        Vector<decltype(v[0] * value)> result(v.size());
+        for (size_t i = 0; i < v.size(); i++)
+        {
+            result[i] = v[i] * value;
+        }
+        return result;
+    }
+
+    template <class T, class U>
+    auto operator*(const U &value, const Vector<T> &v) -> Vector<decltype(value * v[0])>
     {
         return v * value;
+    }
+
+    template <class T, class U>
+    auto operator*(const Vector<T> &v, const Complex<U> &c) -> Vector<decltype(v[0] * c)>
+    {
+        Vector<decltype(v[0] * c)> result(v.size());
+        for (size_t i = 0; i < v.size(); i++)
+        {
+            result[i] = v[i] * c;
+        }
+        return result;
+    }
+  
+    template <class T, class U>
+    auto operator*(const Complex<U> &c, const Vector<T> &v) -> Vector<decltype(c * v[0])>
+    {
+        return v * c;
+    }
+
+    template <class T, class U>
+    auto operator/(const Vector<T> &v, const U &value) -> Vector<decltype(v[0] / value)>
+    {
+        Vector<decltype(v[0] / value)> result(v.size());
+        for (size_t i = 0; i < v.size(); i++)
+        {
+            result[i] = v[i] / value;
+        }
+        return result;
     }
 
     template <class T, class U>
