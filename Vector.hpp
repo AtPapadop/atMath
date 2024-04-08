@@ -9,9 +9,11 @@
 #include <initializer_list>
 #include <vector>
 #include "Complex.hpp"
+#include "Quartenion.hpp"
 
 namespace atMath
 {   
+    const double PI = 3.14159265358979323846;
 
     template <class T>
     class Vector;
@@ -184,16 +186,10 @@ namespace atMath
         void setX(T x) { Vector<T>::operator[](0) = x; }
         void setY(T y) { Vector<T>::operator[](1) = y; }
 
-        Vec2<T> &operator=(const Vec2<T> &v)
+        Vec2<T> &operator=(const Complex<T> &c)
         {
-            Vector<T>::operator=(v);
-            return *this;
-        }
-
-        template <class U>
-        Vec2<T> &operator=(const Vec2<U> &v)
-        {
-            Vector<T>::operator=(v);
+            Vector<T>::operator[](0) = c.real;
+            Vector<T>::operator[](1) = c.imag;
             return *this;
         }
 
@@ -202,10 +198,10 @@ namespace atMath
         {
             Vector<T>::operator[](0) = static_cast<T>(c.real);
             Vector<T>::operator[](1) = static_cast<T>(c.imag);
-            return *this;
-
-            
+            return *this;  
         }
+
+        Vec2<T> rotate(double angle, bool deg = false) const;
 
     
     };
@@ -230,18 +226,6 @@ namespace atMath
         void setX(T x) { Vector<T>::operator[](0) = x; }
         void setY(T y) { Vector<T>::operator[](1) = y; }
         void setZ(T z) { Vector<T>::operator[](2) = z; }
-
-        Vec3<T> &operator=(const Vec3<T> &v)
-        {
-            Vector<T>::operator=(v);
-            return *this;
-        }
-        template <class U>
-        Vec3<T> &operator=(const Vec3<U> &v)
-        {
-            Vector<T>::operator=(v);
-            return *this;
-        }
 
     };
 
@@ -268,18 +252,6 @@ namespace atMath
         void setZ(T z) { Vector<T>::operator[](2) = z; }
         void setW(T w) { Vector<T>::operator[](3) = w; }
 
-        Vec4<T> &operator=(const Vec4<T> &v)
-        {
-            Vector<T>::operator=(v);
-            return *this;
-        }
-        template <class U>
-        Vec4<T> &operator=(const Vec4<U> &v)
-        {
-            Vector<T>::operator=(v);
-            return *this;
-        }
-
     };
 
 
@@ -303,6 +275,12 @@ namespace atMath
 
     template <class T, class U>
     auto operator*(const Complex<U> &c, const Vector<T> &v) -> Vector<decltype(c * v[0])>;
+
+    template <class T, class U>
+    auto operator*(const Vector<T> &v, const Quaternion<U> &q) -> Vector<decltype(v[0] * q)>;
+
+    template <class T, class U>
+    auto operator*(const Quaternion<U> &q, const Vector<T> &v) -> Vector<decltype(q * v[0])>;
 
     template <class T, class U>
     auto operator/(const Vector<T> &v, const U &value) -> std::enable_if_t<std::is_arithmetic<U>::value, Vector<decltype(v[0] / value)>>;

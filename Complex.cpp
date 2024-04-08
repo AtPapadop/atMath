@@ -8,8 +8,12 @@ namespace atMath{
 
 
     template <class T>
-    Complex<T>::Complex(T real, T imag) : real(real), imag(imag) {
+    Complex<T>::Complex(T real, T imag, bool is_polar) : real(real), imag(imag){
         static_assert(std::is_arithmetic<T>::value, "Complex type must be arithmetic");
+        if (is_polar){
+            this->real = real * cos(imag);
+            this->imag = real * sin(imag);
+        }
     }
 
     template <class T>

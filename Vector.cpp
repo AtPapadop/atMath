@@ -1,5 +1,6 @@
 #include "Vector.hpp"
 #include "Complex.hpp"
+#include "Quartenion.hpp"
 #include <cmath>
 #include <map>
 
@@ -36,7 +37,6 @@ namespace atMath
     Vector<T>::Vector()
     {
         static_assert(std::is_arithmetic<T>::value || std::is_base_of<Complex<int>, T>::value || std::is_base_of<Complex<float>, T>::value || std::is_base_of<Complex<double>, T>::value || std::is_base_of<Complex<uint32_t>, T>::value || std::is_base_of<Complex<uint64_t>, T>::value || std::is_base_of<Complex<int32_t>, T>::value || std::is_base_of<Complex<int64_t>, T>::value || std::is_base_of<Complex<uint8_t>, T>::value || std::is_base_of<Complex<int8_t>, T>::value || std::is_base_of<Complex<uint16_t>, T>::value || std::is_base_of<Complex<int16_t>, T>::value, "Vector type must be arithmetic or Complex"); 
-
 
         v_data(nullptr);
         v_size = 0;
@@ -456,7 +456,7 @@ namespace atMath
         double angle = acos(dot(v) / (magnitude() * v.magnitude()));
         if (deg)
         {
-            angle = angle * 180 / M_PI;
+            angle = angle * 180 / PI;
         }
         return angle;
     }
@@ -984,6 +984,23 @@ namespace atMath
     }
 
     template <class T, class U>
+    auto operator*(const Vector<T> &v, const Quaternion<U> &q) -> Vector<decltype(v[0] * q)>
+    {
+        Vector<decltype(v[0] * q)> result(v.size());
+        for (size_t i = 0; i < v.size(); i++)
+        {
+            result[i] = v[i] * q;
+        }
+        return result;
+    }
+
+    template <class T, class U>
+    auto operator*(const Quaternion<U> &q, const Vector<T> &v) -> Vector<decltype(q * v[0])>
+    {
+        return v * q;
+    }
+
+    template <class T, class U>
     auto operator/(const Vector<T> &v, const U &value) -> std::enable_if_t<std::is_arithmetic<U>::value, Vector<decltype(v[0] / value)>>
     {
         Vector<decltype(v[0] / value)> result(v.size());
@@ -1015,6 +1032,20 @@ namespace atMath
     auto operator/(const Complex<U> &c, const Vector<T> &v) -> Vector<decltype(c / v[0])>
     {
         return v.inverse() * c;
+    }
+
+    template <class T>
+    Vec2<T> Vec2<T>::rotate(double angle, bool deg) const
+    {
+        double theta = angle;
+        if (deg)
+        {
+            theta = angle * PI / 180;
+        }
+        Vec2<T> result;
+        result[0] = x * cos(theta) - y * sin(theta);
+        result[1] = x * sin(theta) + y * cos(theta);
+        return result;
     }
 
 }

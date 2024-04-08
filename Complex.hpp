@@ -6,6 +6,7 @@
 #include <limits>
 #include <cmath>
 #include <iterator>
+#include "Vector.hpp"
 
 
 namespace atMath
@@ -17,7 +18,7 @@ namespace atMath
         T real;
         T imag;
 
-        Complex(T real, T imag);
+        Complex(T real, T imag, bool is_polar = false);
         Complex(const T real);
         Complex(const Complex<T> &c);
         Complex();
@@ -51,7 +52,6 @@ namespace atMath
             return Complex<T>(-real, -imag);
         }
 
-
         template <class U>
         operator U() const{
             return static_cast<U>(real);
@@ -71,8 +71,9 @@ namespace atMath
 
         Complex<T> conjugate() const;
 
+
         friend std::ostream &operator<<(std::ostream &os, const Complex<T> &c){
-            os << std::setprecision(std::min(std::numeric_limits<T>::digits10, 6));
+            os << std::fixed << std::setprecision(std::min(std::numeric_limits<T>::digits10, 2));
             if (!c.real && !c.imag){
                 os << 0;
             } else if (!c.real){
@@ -128,8 +129,8 @@ namespace atMath
     }
 
     template <class T, class U>
-    inline auto operator/(const Complex<T> &c1, const Complex<U> &c2) -> Complex<decltype(c1.real / c2.real)>{
-        return Complex<decltype(c1.real / c2.real)>( (c1.real * c2.real + c1.imag * c2.imag) / (c2.real * c2.real + c2.imag * c2.imag), (c1.imag * c2.real - c1.real * c2.imag) / (c2.real * c2.real + c2.imag * c2.imag));
+    inline auto operator/(const Complex<T> &c1, const Complex<U> &c2) -> Complex<decltype(1.f * c1.real / c2.real)>{
+        return Complex<decltype(1.f * c1.real / c2.real)>( 1.f *(c1.real * c2.real + c1.imag * c2.imag) / (c2.real * c2.real + c2.imag * c2.imag), 1.f *(c1.imag * c2.real - c1.real * c2.imag) / (c2.real * c2.real + c2.imag * c2.imag));
     }
 
     template <class T, class U>
@@ -163,13 +164,13 @@ namespace atMath
     }
 
     template <class T, class U>
-    inline auto operator/(const Complex<T> &c,const  U &value) -> std::enable_if_t<std::is_arithmetic<U>::value, Complex<decltype(c.real / value)>>{
-        return Complex<decltype(c.real / value)>(c.real / value, c.imag / value);
+    inline auto operator/(const Complex<T> &c,const  U &value) -> std::enable_if_t<std::is_arithmetic<U>::value, Complex<decltype(1.f *c.real / value)>>{
+        return Complex<decltype(1.f * c.real / value)>(1.f * c.real / value,1.f * c.imag / value);
     }
 
     template <class T, class U>
-    auto operator/(const U &value, const Complex<T> &c) -> std::enable_if_t<std::is_arithmetic<U>::value,Complex<decltype(value * c.real / c.squared_modulus())>>{
-        double mod_rev = 1 / c.squared_modulus();
+    auto operator/(const U &value, const Complex<T> &c) -> std::enable_if_t<std::is_arithmetic<U>::value,Complex<decltype(1.f * value * c.real / c.squared_modulus())>>{
+        double mod_rev = 1.f / c.squared_modulus();
         Complex<decltype(value * c.real * mod_rev)> result(c.real * mod_rev, -c.imag * mod_rev);
         return result * value;
     }
