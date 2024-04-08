@@ -66,19 +66,6 @@ namespace atMath
         T &operator[](size_t index);
         const T &operator[](size_t index) const;
 
-
-        // template <class U>
-        // auto operator+(const Vector<U> &v) const -> Vector<decltype(v_data[0] + v[0])>;
-
-        // template <class U>
-        // auto operator-(const Vector<U> &v) const -> Vector<decltype(v_data[0] - v[0])>;
-
-        // template <class U>
-        // auto operator*(const U &value) const -> Vector<decltype(v_data[0] * value)>;
-
-        // template <class U>
-        // auto operator/(const U &value) const -> Vector<decltype(v_data[0] / value)>;
-
         Vector<T> &operator=(const Vector<T> &v);
         template <class U>
         Vector<T> &operator=(const Vector<U> &v);
@@ -88,6 +75,7 @@ namespace atMath
         Vector<T> &operator-=(const Vector<U> &v);
         template <class U>
         Vector<T> &operator*=(const Vector<U> &v);
+
 
         template <class U>
         Vector<T> &operator*=(const U &value);
@@ -103,8 +91,6 @@ namespace atMath
 
         template <class U>
         auto dot(const Vector<U> &v) const -> decltype(v_data[0] * v[0]);
-        template <class U>
-        auto operator*(const Vector<U> &v) const -> decltype(v_data[0] * v[0]);
         template <class U>
         auto cross(const Vector<U> &v) const -> Vector<decltype(v_data[0] * v[0])>;
         template <class U>
@@ -294,92 +280,41 @@ namespace atMath
             return *this;
         }
 
-        
-
     };
 
-    template <class T, class U>
-    auto operator+(const Vector<T> &v1, const Vector<U> &v2) -> Vector<decltype(v1[0] + v2[0])>
-    {
-        if (v1.size() != v2.size())
-        {
-            throw std::runtime_error("Vectors must be the same size to add.");
-        }
-        Vector<decltype(v1[0] + v2[0])> result(v1.size());
-        for (size_t i = 0; i < v1.size(); i++)
-        {
-            result[i] = v1[i] + v2[i];
-        }
-        return result;
-    }
 
     template <class T, class U>
-    auto operator-(const Vector<T> &v1, const Vector<U> &v2) -> Vector<decltype(v1[0] - v2[0])>
-    {
-        if (v1.size() != v2.size())
-        {
-            throw std::runtime_error("Vectors must be the same size to subtract.");
-        }
-        Vector<decltype(v1[0] - v2[0])> result(v1.size());
-        for (size_t i = 0; i < v1.size(); i++)
-        {
-            result[i] = v1[i] - v2[i];
-        }
-        return result;
-    }
+    auto operator+(const Vector<T> &v1, const Vector<U> &v2) -> Vector<decltype(v1[0] + v2[0])>;
 
     template <class T, class U>
-    auto operator*(const Vector<T> &v, const U &value) -> Vector<decltype(v[0] * value)>
-    {
-        Vector<decltype(v[0] * value)> result(v.size());
-        for (size_t i = 0; i < v.size(); i++)
-        {
-            result[i] = v[i] * value;
-        }
-        return result;
-    }
+    auto operator-(const Vector<T> &v1, const Vector<U> &v2) -> Vector<decltype(v1[0] - v2[0])>;
 
     template <class T, class U>
-    auto operator*(const U &value, const Vector<T> &v) -> Vector<decltype(value * v[0])>
-    {
-        return v * value;
-    }
+    auto operator*(const Vector<T> &v1, const Vector<U> &v2) -> decltype(v1[0] * v2[0]);
 
     template <class T, class U>
-    auto operator*(const Vector<T> &v, const Complex<U> &c) -> Vector<decltype(v[0] * c)>
-    {
-        Vector<decltype(v[0] * c)> result(v.size());
-        for (size_t i = 0; i < v.size(); i++)
-        {
-            result[i] = v[i] * c;
-        }
-        return result;
-    }
-  
-    template <class T, class U>
-    auto operator*(const Complex<U> &c, const Vector<T> &v) -> Vector<decltype(c * v[0])>
-    {
-        return v * c;
-    }
+    auto operator*(const Vector<T> &v, const U &value) -> std::enable_if_t<std::is_arithmetic<U>::value, Vector<decltype(v[0] * value)>>;
 
     template <class T, class U>
-    auto operator/(const Vector<T> &v, const U &value) -> Vector<decltype(v[0] / value)>
-    {
-        Vector<decltype(v[0] / value)> result(v.size());
-        for (size_t i = 0; i < v.size(); i++)
-        {
-            result[i] = v[i] / value;
-        }
-        return result;
-    }
+    auto operator*(const U &value, const Vector<T> &v) -> std::enable_if_t<std::is_arithmetic<U>::value, Vector<decltype(v[0] * value)>>;
 
     template <class T, class U>
-    auto operator/(const U &value, const Vector<T> &v) -> Vector<decltype(value / v[0])>
-    {
-        return value * v.inverse();
-    }
+    auto operator*(const Vector<T> &v, const Complex<U> &c) -> Vector<decltype(v[0] * c)>;
 
+    template <class T, class U>
+    auto operator*(const Complex<U> &c, const Vector<T> &v) -> Vector<decltype(c * v[0])>;
 
+    template <class T, class U>
+    auto operator/(const Vector<T> &v, const U &value) -> std::enable_if_t<std::is_arithmetic<U>::value, Vector<decltype(v[0] / value)>>;
+
+    template <class T, class U>
+    auto operator/(const U &value, const Vector<T> &v) -> std::enable_if_t<std::is_arithmetic<U>::value, Vector<decltype(value / v[0])>>;
+
+    template <class T, class U>
+    auto operator/(const Vector<T> &v, const Complex<U> &c) -> Vector<decltype(v[0] / c)>;
+
+    template <class T, class U>
+    auto operator/(const Complex<U> &c, const Vector<T> &v) -> Vector<decltype(c / v[0])>;
 
     typedef Vec2<float> Vec2f;
     typedef Vec2<double> Vec2d;

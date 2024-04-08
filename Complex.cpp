@@ -31,57 +31,6 @@ namespace atMath{
     Complex<T>::~Complex() {}
 
 
-    // template <class T>
-    // template <class U>
-    // auto Complex<T>::operator+(const Complex<U> &c) const -> Complex<decltype(real + c.real)>{
-    //     return Complex<decltype(real + c.real)>(real + c.real, imag + c.imag);
-    // }
-
-    // template <class T>
-    // template <class U>
-    // auto Complex<T>::operator-(const Complex<U> &c) const -> Complex<decltype(real - c.real)>{
-    //     return Complex<decltype(real - c.real)>(real - c.real, imag - c.imag);
-    // }
-
-    // template <class T>
-    // template <class U>
-    // auto Complex<T>::operator*(const Complex<U> &c) const -> Complex<decltype(real * c.real)>{
-    //     return Complex<decltype(real * c.real)>(real * c.real - imag * c.imag, real * c.imag + imag * c.real);
-    // }
-
-    // template <class T>
-    // template <class U>
-    // auto Complex<T>::operator/(const Complex<U> &c) const -> Complex<decltype(real / c.real)>{
-    //     return Complex<decltype(real / c.real)>( (real * c.real + imag * c.imag) / (c.real * c.real + c.imag * c.imag), (imag * c.real - real * c.imag) / (c.real * c.real + c.imag * c.imag));
-    // }
-
-
-    // template <class T>
-    // template <class U>
-    // auto Complex<T>::operator+(const U &value) const -> Complex<decltype(real + value)>{
-    //     return Complex<decltype(real + value)>(real + value, imag);
-    // }
-
-    // template <class T>
-    // template <class U>
-    // auto Complex<T>::operator-(const U &value) const -> Complex<decltype(real - value)>{
-    //     return Complex<decltype(real - value)>(real - value, imag);
-    // }
-
-    // template <class T>
-    // template <class U>
-    // auto Complex<T>::operator*(const U &value) const -> Complex<decltype(real * value)>{
-    //     static_assert(std::is_arithmetic<U>::value, "Complex type must be arithmetic");
-    //     return Complex<decltype(real * value)>(real * value, imag * value);
-    // }
-
-    // template <class T>
-    // template <class U>
-    // auto Complex<T>::operator/(const U &value) const -> Complex<decltype(real / value)>{
-    //     return Complex<decltype(real / value)>(real / value, imag / value);
-    // }
-
-    
     template <class T>
     Complex<T> &Complex<T>::operator=(const Complex<T> &c){
         if (this != &c){
@@ -124,8 +73,6 @@ namespace atMath{
         return *this;
     }
 
-
-
     template <class T>
     template <class U>
     Complex<T> &Complex<T>::operator/=(const Complex<U> &c){
@@ -134,7 +81,6 @@ namespace atMath{
         imag = (imag * static_cast<T>(c.real) - temp * static_cast<T>(c.imag)) / (c.real * c.real + c.imag * c.imag);
         return *this;
     }
-
 
     template <class T>
     template <class U>
@@ -194,13 +140,26 @@ namespace atMath{
     double Complex<T>::squared_modulus() const{
         return real * real + imag * imag;
     }
+
+    template <class T>
+    Complex<double> Complex<T>::pow(const double &epx){
+        double r = std::pow(modulus(), epx);
+        double theta = atan2(imag, real);
+        return Complex<double>(r * cos(theta * epx), r * sin(theta * epx));
+    }
+
+    template <class T>
+    template <class U>
+    Complex<double> Complex<T>::pow(const Complex<U> &c){
+        double r = std::pow(modulus(), c.real) * exp(-c.imag * atan2(imag, real));
+        double theta = c.real * atan2(imag, real) + 0.5 * c.imag * log(squared_modulus());
+        return Complex<double>(r * cos(theta), r * sin(theta));
+    }
     
     template <class T>
     Complex<T> Complex<T>::conjugate() const{
         return Complex<T>(real, -imag);
     }
-
-
 
     template <class T>
     bool is_complex(const T &value){
