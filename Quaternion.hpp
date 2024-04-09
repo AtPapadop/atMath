@@ -2,11 +2,8 @@
 
 #include <iostream>
 #include <type_traits>
-#include <iomanip>
-#include <limits>
-#include <cmath>
-#include <iterator>
 #include "Complex.hpp"
+
 
 namespace atMath{
 
@@ -20,11 +17,7 @@ namespace atMath{
         T k;
 
         Quaternion(T real, T i, T j, T k);
-        template <class U>
-        Quaternion(U real, U i, U j, U k);
         Quaternion(const T real);
-        template <class U>
-        Quaternion(const U real);
         Quaternion(const Complex<T> &c);
         template <class U>
         Quaternion(const Complex<U> &c);
@@ -47,6 +40,8 @@ namespace atMath{
         Quaternion<T> &operator/=(const Quaternion<U> &q);
 
         template <class U>
+        Quaternion<T> &operator=(const Complex<U> &c);
+        template <class U>
         Quaternion<T> &operator+=(const Complex<U> &c);
         template <class U>
         Quaternion<T> &operator-=(const Complex<U> &c);
@@ -55,6 +50,8 @@ namespace atMath{
         template <class U>
         Quaternion<T> &operator/=(const Complex<U> &c);
 
+        template <class U>
+        std::enable_if_t<std::is_arithmetic<U>::value, Quaternion<T> &> operator=(const U &value);
         template <class U>
         std::enable_if_t<std::is_arithmetic<U>::value, Quaternion<T> &> operator+=(const U &value);
         template <class U>
@@ -69,58 +66,60 @@ namespace atMath{
         }
 
         template <class U>
-        operator U() const{
-            return static_cast<U>(real);
-        }
+        bool operator==(const Quaternion<U> &q) const;
+        template <class U>
+        bool operator!=(const Quaternion<U> &q) const;
 
-        double norm() const{
-            return sqrt(real * real + i * i + j * j + k * k);
-        }
+        double modulus() const;
+        T modulus_squared() const;
 
-        T norm_squared() const{
-            return real * real + i * i + j * j + k * k;
-        }
+        Quaternion<double> pow(const double &exp) const;
+        template <class U>
+        Quaternion<double> pow(const Complex<U> &exp) const;
+        template <class U>
+        Quaternion<double> pow(const Quaternion<U> &exp) const;
 
-        Quaternion<T> conjugate() const{
-            return Quaternion<T>(real, -i, -j, -k);
-        }
 
-        auto inverse() const -> Quaternion<decltype(1.f / (real * real + i * i + j * j + k * k))>{
-            T norm_squared = real * real + i * i + j * j + k * k;
-            Quaternion<decltype(1.f / norm_squared)> q(real, -i, -j, -k);
-            q /= real * real + i * i + j * j + k * k;
-            return q;
-        }
+        Quaternion<T> conjugate() const;
+
+        auto inverse() const -> Quaternion<decltype(1.f / (real * real + i * i + j * j + k * k))>;
 
         friend std::ostream &operator<<(std::ostream &os, const Quaternion<T> &q){
-            os << std::fixed << std::setprecision(std::min(std::numeric_limits<T>::digits10, 2));
+            os << std::fixed << std::setprecision(3);
+            float epsilon = 0.0001f;
             bool real = false, i = false, j = false, k = false;
-            if (q.real != 0){
+            if (std::abs(q.real) > epsilon){
                 os << q.real;
                 real = true;
             }
-            if (q.i != 0){
+            if (std::abs(q.i) > epsilon){
                 if (q.i > 0 && real)
                     os << " + ";
                 else if (q.i < 0)
                     os << " - ";
-                os << (std::abs(q.i) == 1 ? "" : std::to_string(std::abs(q.i))) << "i";
+                if (std::abs(q.i) != 1)
+                    os << std::abs(q.i);
+                os << "i";
                 i = true;
             }
-            if (q.j != 0){
+            if (std::abs(q.j) > epsilon){
                 if (q.j > 0 && (real || i))
                     os << " + ";
                 else if (q.j < 0)
                     os << " - ";
-                os << (std::abs(q.j) == 1 ? "" : std::to_string(std::abs(q.j))) << "j";
+                if (std::abs(q.j) != 1)
+                    os << std::abs(q.j);
+                os << "j";
                 j = true;
             }
-            if (q.k != 0){
+            if (std::abs(q.k) > epsilon){
                 if (q.k > 0 && (real || i || j))
                     os << " + ";
                 else if (q.k < 0)
                     os << " - ";
-                os << (std::abs(q.k) == 1 ? "" : std::to_string(std::abs(q.k))) << "k";
+                if (std::abs(q.k) != 1)
+                    os << std::abs(q.k);
+                os << "k";
             }
             if (!(real || i || j || k))
                 os << "0";
@@ -173,3 +172,11 @@ namespace atMath{
     auto operator/(const U &value, const Quaternion<T> &q) -> std::enable_if_t<std::is_arithmetic<U>::value, Quaternion<decltype(1.f / (q.real * q.real + q.i * q.i + q.j * q.j + q.k * q.k))>>;
 
 }
+
+template <class T>
+atMath::Quaternion<double> exp(const atMath::Quaternion<T> &q);
+
+template <class T>
+atMath::Quaternion<double> log(const atMath::Quaternion<T> &q);
+
+

@@ -1,13 +1,15 @@
 #include "Vector.hpp"
 #include "Complex.hpp"
-#include "Quartenion.hpp"
+#include "Quaternion.hpp"
 #include <cmath>
 #include <map>
 
-
-
 namespace atMath
 {
+    const double PI = 3.14159265358979323846;
+    const double E = 2.71828182845904523536;
+
+
     std::map<std::string, std::string> type_map = {
     {"c", "char"},
     {"i", "int"},
@@ -33,11 +35,38 @@ namespace atMath
     {"N6atMath7ComplexItEE", "complex uint16_t"},
     {"N6atMath7ComplexIsEE", "complex int16_t"}};
 
+    template<typename T>
+    inline void assert_is_arithmetic() {
+        static_assert(std::is_arithmetic<T>::value || 
+            std::is_base_of<Complex<int>, T>::value || 
+            std::is_base_of<Complex<float>, T>::value || 
+            std::is_base_of<Complex<double>, T>::value || 
+            std::is_base_of<Complex<uint32_t>, T>::value || 
+            std::is_base_of<Complex<uint64_t>, T>::value || 
+            std::is_base_of<Complex<int32_t>, T>::value || 
+            std::is_base_of<Complex<int64_t>, T>::value || 
+            std::is_base_of<Complex<uint8_t>, T>::value || 
+            std::is_base_of<Complex<int8_t>, T>::value || 
+            std::is_base_of<Complex<uint16_t>, T>::value || 
+            std::is_base_of<Complex<int16_t>, T>::value ||
+            std::is_base_of<Quaternion<int>, T>::value ||
+            std::is_base_of<Quaternion<float>, T>::value ||
+            std::is_base_of<Quaternion<double>, T>::value ||
+            std::is_base_of<Quaternion<uint32_t>, T>::value ||
+            std::is_base_of<Quaternion<uint64_t>, T>::value ||
+            std::is_base_of<Quaternion<int32_t>, T>::value ||
+            std::is_base_of<Quaternion<int64_t>, T>::value ||
+            std::is_base_of<Quaternion<uint8_t>, T>::value ||
+            std::is_base_of<Quaternion<int8_t>, T>::value ||
+            std::is_base_of<Quaternion<uint16_t>, T>::value ||
+            std::is_base_of<Quaternion<int16_t>, T>::value, "Vector type must be arithmetic or Complex or Quaternion");
+    }
+
     template <class T>
     Vector<T>::Vector()
     {
-        static_assert(std::is_arithmetic<T>::value || std::is_base_of<Complex<int>, T>::value || std::is_base_of<Complex<float>, T>::value || std::is_base_of<Complex<double>, T>::value || std::is_base_of<Complex<uint32_t>, T>::value || std::is_base_of<Complex<uint64_t>, T>::value || std::is_base_of<Complex<int32_t>, T>::value || std::is_base_of<Complex<int64_t>, T>::value || std::is_base_of<Complex<uint8_t>, T>::value || std::is_base_of<Complex<int8_t>, T>::value || std::is_base_of<Complex<uint16_t>, T>::value || std::is_base_of<Complex<int16_t>, T>::value, "Vector type must be arithmetic or Complex"); 
 
+        assert_is_arithmetic<T>();
         v_data(nullptr);
         v_size = 0;
     }
@@ -45,7 +74,8 @@ namespace atMath
     template <class T>
     Vector<T>::Vector(size_t size)
     {
-        static_assert(std::is_arithmetic<T>::value || std::is_base_of<Complex<int>, T>::value || std::is_base_of<Complex<float>, T>::value || std::is_base_of<Complex<double>, T>::value || std::is_base_of<Complex<uint32_t>, T>::value || std::is_base_of<Complex<uint64_t>, T>::value || std::is_base_of<Complex<int32_t>, T>::value || std::is_base_of<Complex<int64_t>, T>::value || std::is_base_of<Complex<uint8_t>, T>::value || std::is_base_of<Complex<int8_t>, T>::value || std::is_base_of<Complex<uint16_t>, T>::value || std::is_base_of<Complex<int16_t>, T>::value, "Vector type must be arithmetic or Complex"); 
+
+        assert_is_arithmetic<T>();
         try{
             v_data = std::make_unique<T[]>(size);
         }catch(const std::bad_alloc& e){
@@ -58,7 +88,8 @@ namespace atMath
     template <class T>
     Vector<T>::Vector(size_t size, T value)
     {
-        static_assert(std::is_arithmetic<T>::value || std::is_base_of<Complex<int>, T>::value || std::is_base_of<Complex<float>, T>::value || std::is_base_of<Complex<double>, T>::value || std::is_base_of<Complex<uint32_t>, T>::value || std::is_base_of<Complex<uint64_t>, T>::value || std::is_base_of<Complex<int32_t>, T>::value || std::is_base_of<Complex<int64_t>, T>::value || std::is_base_of<Complex<uint8_t>, T>::value || std::is_base_of<Complex<int8_t>, T>::value || std::is_base_of<Complex<uint16_t>, T>::value || std::is_base_of<Complex<int16_t>, T>::value, "Vector type must be arithmetic or Complex"); 
+
+        assert_is_arithmetic<T>();
 
         try{
         v_data = std::make_unique<T[]>(size);
@@ -94,7 +125,8 @@ namespace atMath
     template <class T>
     Vector<T>::Vector(const std::vector<T> &v)
     {
-        static_assert(std::is_arithmetic<T>::value || std::is_base_of<Complex<int>, T>::value || std::is_base_of<Complex<float>, T>::value || std::is_base_of<Complex<double>, T>::value || std::is_base_of<Complex<uint32_t>, T>::value || std::is_base_of<Complex<uint64_t>, T>::value || std::is_base_of<Complex<int32_t>, T>::value || std::is_base_of<Complex<int64_t>, T>::value || std::is_base_of<Complex<uint8_t>, T>::value || std::is_base_of<Complex<int8_t>, T>::value || std::is_base_of<Complex<uint16_t>, T>::value || std::is_base_of<Complex<int16_t>, T>::value, "Vector type must be arithmetic or Complex"); 
+
+        assert_is_arithmetic<T>();
         v_size = v.size();
 
         try{
@@ -112,9 +144,29 @@ namespace atMath
     }
 
     template <class T>
+    template <class U>
+    Vector<T>::Vector(const Vector<U> &v)
+    {
+        static_assert(std::is_arithmetic<T>::value);
+        v_size = v.size();
+
+        try{
+            v_data = std::make_unique<T[]>(v_size);
+        }catch(const std::bad_alloc& e){
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+
+        for (size_t i = 0; i < v_size; i++)
+        {
+            v_data[i] = static_cast<T>(v[i]);
+        }
+    }
+
+    template <class T>
     Vector<T>::Vector(std::initializer_list<T> list)
     {
-        static_assert(std::is_arithmetic<T>::value || std::is_base_of<Complex<int>, T>::value || std::is_base_of<Complex<float>, T>::value || std::is_base_of<Complex<double>, T>::value || std::is_base_of<Complex<uint32_t>, T>::value || std::is_base_of<Complex<uint64_t>, T>::value || std::is_base_of<Complex<int32_t>, T>::value || std::is_base_of<Complex<int64_t>, T>::value || std::is_base_of<Complex<uint8_t>, T>::value || std::is_base_of<Complex<int8_t>, T>::value || std::is_base_of<Complex<uint16_t>, T>::value || std::is_base_of<Complex<int16_t>, T>::value, "Vector type must be arithmetic or Complex"); 
+
+        assert_is_arithmetic<T>();
         v_size = list.size();
 
         try{
@@ -134,57 +186,10 @@ namespace atMath
     template <class T>
     Vector<T>::Vector(std::unique_ptr<T[]> data, size_t size)
     {
-        static_assert(std::is_arithmetic<T>::value || std::is_base_of<Complex<int>, T>::value || std::is_base_of<Complex<float>, T>::value || std::is_base_of<Complex<double>, T>::value || std::is_base_of<Complex<uint32_t>, T>::value || std::is_base_of<Complex<uint64_t>, T>::value || std::is_base_of<Complex<int32_t>, T>::value || std::is_base_of<Complex<int64_t>, T>::value || std::is_base_of<Complex<uint8_t>, T>::value || std::is_base_of<Complex<int8_t>, T>::value || std::is_base_of<Complex<uint16_t>, T>::value || std::is_base_of<Complex<int16_t>, T>::value, "Vector type must be arithmetic or Complex"); 
+
+        assert_is_arithmetic<T>();
         v_size = size;
         v_data.swap(data);
-    }
-
-    template <class T>
-    Vector<T>::Vector(const Vec2<T> &v)
-    {
-        v_size = 2;
-
-        try{
-        v_data = std::make_unique<T[]>(v_size);
-        }catch(const std::bad_alloc& e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-
-        v_data[0] = v.x;
-        v_data[1] = v.y;
-    }
-
-    template <class T>
-    Vector<T>::Vector(const Vec3<T> &v)
-    {
-        v_size = 3;
-
-        try{
-        v_data = std::make_unique<T[]>(v_size);
-        }catch(const std::bad_alloc& e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-
-        v_data[0] = v.x;
-        v_data[1] = v.y;
-        v_data[2] = v.z;
-    }
-
-    template <class T>
-    Vector<T>::Vector(const Vec4<T> &v)
-    {
-        v_size = 4;
-
-        try{
-        v_data = std::make_unique<T[]>(v_size);
-        }catch(const std::bad_alloc& e){
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-
-        v_data[0] = v.x;
-        v_data[1] = v.y;
-        v_data[2] = v.z;
-        v_data[3] = v.w;
     }
 
     template <class T>
@@ -504,14 +509,9 @@ namespace atMath
     }
 
     template <class T>
-    auto Vector<T>::magnitude() const -> decltype(sqrt(v_data[0] * v_data[0]))
+    double Vector<T>::magnitude() const
     {
-        decltype(v_data[0] * v_data[0]) result = 0;
-        for (size_t i = 0; i < v_size; i++)
-        {
-            result += v_data[i] * v_data[i];
-        }
-        return sqrt(result);
+        return sqrt(dot(*this));
     }
 
     template <class T>
@@ -537,7 +537,7 @@ namespace atMath
 
     template <class T>
     template <class U>
-    Vector<T> Vector<T>::append(const U &value)
+    std::enable_if_t<std::is_arithmetic<U>::value, Vector<T>> Vector<T>::append(const U &value)
     {
         if (typeid(T) != typeid(U))
         {
@@ -557,7 +557,7 @@ namespace atMath
 
     template <class T>
     template <class U>
-    Vector<T> Vector<T>::insert(size_t index, const U &value)
+    std::enable_if_t<std::is_arithmetic<U>::value, Vector<T>> Vector<T>::insert(size_t index, const U &value)
     {
         if (typeid(T) != typeid(U))
         {
@@ -736,146 +736,6 @@ namespace atMath
 
 
     template <class T>
-    template <class U>
-    Vector<T> Vector<T>::append(const Vec2<U> &v)
-    {
-        if (typeid(T) != typeid(U))
-        {
-            std::cout << "Warning: Type mismatch. Converting " << (type_map.find(typeid(U).name()) != type_map.end() ? type_map[typeid(U).name()] : typeid(U).name()) << " to " << (type_map.find(typeid(T).name()) != type_map.end() ? type_map[typeid(T).name()] : typeid(T).name()) << std::endl;
-        }
-
-        Vector<T> result(v_size + 2);
-        for (size_t i = 0; i < v_size; i++)
-        {
-            result[i] = v_data[i];
-        }
-        result[v_size] = v[0];
-        result[v_size + 1] = v[1];
-
-        return result;
-    }
-
-    template <class T>
-    template <class U>
-    Vector<T> Vector<T>::insert(size_t index, const Vec2<U> &v)
-    {
-        if (index > v_size)
-        {
-            throw std::runtime_error("Index out of bounds.");
-        }
-
-        Vector<T> result(v_size + 2);
-        for (size_t i = 0; i < index; i++)
-        {
-            result[i] = v_data[i];
-        }
-        result[index] = v[0];
-        result[index + 1] = v[1];
-        for (size_t i = index; i < v_size; i++)
-        {
-            result[i + 2] = v_data[i];
-        }
-
-        return result;
-    }
-
-    template <class T>
-    template <class U>
-    Vector<T> Vector<T>::append(const Vec3<U> &v)
-    {
-        if (typeid(T) != typeid(U))
-        {
-            std::cout << "Warning: Type mismatch. Converting " << (type_map.find(typeid(U).name()) != type_map.end() ? type_map[typeid(U).name()] : typeid(U).name()) << " to " << (type_map.find(typeid(T).name()) != type_map.end() ? type_map[typeid(T).name()] : typeid(T).name()) << std::endl;
-        }
-
-        Vector<T> result(v_size + 3);
-        for (size_t i = 0; i < v_size; i++)
-        {
-            result[i] = v_data[i];
-        }
-        result[v_size] = v[0];
-        result[v_size + 1] = v[1];
-        result[v_size + 2] = v[2];
-
-        return result;
-    }
-
-    template <class T>
-    template <class U>
-    Vector<T> Vector<T>::insert(size_t index, const Vec3<U> &v)
-    {
-        if (index > v_size)
-        {
-            throw std::runtime_error("Index out of bounds.");
-        }
-
-        Vector<T> result(v_size + 3);
-        for (size_t i = 0; i < index; i++)
-        {
-            result[i] = v_data[i];
-        }
-        result[index] = v[0];
-        result[index + 1] = v[1];
-        result[index + 2] = v[2];
-        for (size_t i = index; i < v_size; i++)
-        {
-            result[i + 3] = v_data[i];
-        }
-
-        return result;
-    }
-    
-    template <class T>
-    template <class U>
-    Vector<T> Vector<T>::append(const Vec4<U> &v)
-    {
-        if (typeid(T) != typeid(U))
-        {
-            std::cout << "Warning: Type mismatch. Converting " << (type_map.find(typeid(U).name()) != type_map.end() ? type_map[typeid(U).name()] : typeid(U).name()) << " to " << (type_map.find(typeid(T).name()) != type_map.end() ? type_map[typeid(T).name()] : typeid(T).name()) << std::endl;
-        }
-
-        Vector<T> result(v_size + 4);
-        for (size_t i = 0; i < v_size; i++)
-        {
-            result[i] = v_data[i];
-        }
-        result[v_size] = v[0];
-        result[v_size + 1] = v[1];
-        result[v_size + 2] = v[2];
-        result[v_size + 3] = v[3];
-
-        return result;
-    }
-
-    template <class T>
-    template <class U>
-    Vector<T> Vector<T>::insert(size_t index, const Vec4<U> &v)
-    {
-        if (index > v_size)
-        {
-            throw std::runtime_error("Index out of bounds.");
-        }
-
-        Vector<T> result(v_size + 4);
-        for (size_t i = 0; i < index; i++)
-        {
-            result[i] = v_data[i];
-        }
-        result[index] = v[0];
-        result[index + 1] = v[1];
-        result[index + 2] = v[2];
-        result[index + 3] = v[3];
-        for (size_t i = index; i < v_size; i++)
-        {
-            result[i + 4] = v_data[i];
-        }
-
-        return result;
-    }
-
-    
-
-    template <class T>
     Vector<T> Vector<T>::subvector(size_t start, size_t end) const
     {
         if (start > end || end > v_size)
@@ -896,21 +756,6 @@ namespace atMath
         return subvector(0, size);
     }
 
-
-    template <class T, class U> 
-    auto operator*(const Complex<T> &c, const Vec2<U> &v) -> Vec2<decltype(c.real * v[0])>
-    {
-        Vec2<decltype(c.real * v[0])> result;
-        result[0] = c.real * v[0] - c.imag * v[1];
-        result[1] = c.real * v[1] + c.imag * v[0];
-        return result;
-    }
-
-    template <class T, class U>
-    auto operator*(const Vec2<U> &v, const Complex<T> &c) -> Vec2<decltype(v[0] * c.real)>
-    {
-        return c * v;
-    }
     
     template <class T, class U>
     auto operator+(const Vector<T> &v1, const Vector<U> &v2) -> Vector<decltype(v1[0] + v2[0])>
@@ -1034,18 +879,44 @@ namespace atMath
         return v.inverse() * c;
     }
 
-    template <class T>
-    Vec2<T> Vec2<T>::rotate(double angle, bool deg) const
+    template <class T, class U>
+    auto operator/(const Vector<T> &v, const Quaternion<U> &q) -> Vector<decltype(v[0] / q)>
     {
-        double theta = angle;
-        if (deg)
+        Vector<decltype(v[0] / q)> result(v.size());
+        for (size_t i = 0; i < v.size(); i++)
         {
-            theta = angle * PI / 180;
+            result[i] = v[i] / q;
         }
-        Vec2<T> result;
-        result[0] = x * cos(theta) - y * sin(theta);
-        result[1] = x * sin(theta) + y * cos(theta);
         return result;
     }
 
+    template <class T, class U>
+    auto operator/(const Quaternion<U> &q, const Vector<T> &v) -> Vector<decltype(q / v[0])>
+    {
+        return v.inverse() * q;
+    }
+
+
+}
+
+template <class T>
+auto exp(const atMath::Vector<T> &v) -> atMath::Vector<decltype(exp(v[0]))>
+{
+    atMath::Vector<decltype(exp(v[0]))> result(v.size());
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        result[i] = exp(v[i]);
+    }
+    return result;
+}
+
+template <class T>
+auto log(const atMath::Vector<T> &v) -> atMath::Vector<decltype(log(v[0]))>
+{
+    atMath::Vector<decltype(log(v[0]))> result(v.size());
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        result[i] = log(v[i]);
+    }
+    return result;
 }
