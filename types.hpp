@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vector.hpp"
+#include "Vectors_d.hpp"
 #include "Complex.hpp"
 #include "Quaternion.hpp"
 

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <type_traits>
+#include <iomanip>
 
 namespace atMath
 {

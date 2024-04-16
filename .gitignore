@@ -1,5 +1,6 @@
 *.exe
 main.cpp
+main*
 .vscode/*
 .vscode
 .vscode\*
